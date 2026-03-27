@@ -4,6 +4,7 @@ import { validar } from '../framework-teste'
 //
 // Regras de Negócio:
 // 1. São 4 provas: P1, P2, P3, P4 — notas de 0 a 10
+
 // 2. Pesos: P1 e P2 têm peso 1 | P3 e P4 têm peso 2
 // 3. Média ponderada: (P1×1 + P2×1 + P3×2 + P4×2) / 6
 // 4. Presença >= 75%: bônus de +0,5 na média

@@ -5,6 +5,7 @@ import { validar } from '../framework-teste'
 //
 // Regras de Negócio:
 // 1. Qualidade 'ruim'      → gorjeta de  5% sobre o valor da conta
+
 // 2. Qualidade 'regular'   → gorjeta de 10% sobre o valor da conta
 // 3. Qualidade 'excelente' → gorjeta de 15% sobre o valor da conta
 // 4. O valor da conta deve ser maior que zero — caso contrário o resultado é inválido

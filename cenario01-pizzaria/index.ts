@@ -4,6 +4,7 @@ import { validar } from '../framework-teste'
 //
 // Regras de Negócio:
 // 1. Tamanhos e preços: P = R$25, M = R$35, G = R$50, GG = R$65
+
 // 2. Borda recheada: acréscimo de R$ 8,00 por pizza
 
 // 3. Taxa de entrega: R$ 7,00 fixo — grátis se o subtotal for acima de R$ 80,00

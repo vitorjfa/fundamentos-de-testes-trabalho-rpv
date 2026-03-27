@@ -9,6 +9,7 @@ import { validar } from '../framework-teste'
 // 4. Estadia de 3 ou mais noites: 10% de desconto nas diárias (antes do café)
 // 5. Alta temporada (meses 12, 1 e 2): acréscimo de 30% nas diárias (aplicado ANTES do desconto)
 // 6. Mínimo: 1 noite | Máximo: 30 noites
+
 // 7. Capacidade: quarto Standard até 2 hóspedes | quarto Luxo até 4 hóspedes
 
 // ==================== INTERFACES ====================
