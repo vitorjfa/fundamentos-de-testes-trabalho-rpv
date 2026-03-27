@@ -51,24 +51,58 @@ const cardapio: IPizza[] = [
 // ==================== FUNÇÃO A IMPLEMENTAR ====================
 
 function calcularPedido(pedido: IPedido): IResultadoPedido {
-    // TODO: Implementar a lógica seguindo as regras de negócio
-    //
-    // Passos sugeridos:
-    // 1. Verificar se o pedido é válido (não vazio, dentro do limite de 5 pizzas)
-    // 2. Calcular o subtotal (somar quantidade × preço de cada pizza + borda se aplicável)
-    // 3. Verificar se o subtotal atinge o pedido mínimo (R$ 20,00)
-    // 4. Contar quantas pizzas G ou GG existem no pedido (soma das quantidades)
-    // 5. Se 2+ pizzas G/GG: desconto = 10% do subtotal
-    // 6. Calcular taxa de entrega: R$ 7,00 ou grátis se subtotal > R$ 80,00
-    // 7. Calcular valor total: subtotal - desconto + taxaEntrega
+    const PRECO_BORDA = 8
+    const TAXA_ENTREGA = 7
+    const LIMITE_FRETE_GRATIS = 80
+    const PEDIDO_MINIMO = 20
+    const MAX_PIZZAS = 5
+    const PERCENTUAL_DESCONTO = 0.1
+    const MIN_PIZZAS_GG_PROMOCAO = 2
 
-    return {
-        subtotal: 0,
-        desconto: 0,
-        taxaEntrega: 0,
-        valorTotal: 0,
-        ehValido: false
+
+    if (pedido.itens.length === 0) {
+        return { subtotal: 0, desconto: 0, taxaEntrega: 0, valorTotal: 0, ehValido: false }
     }
+
+    const totalPizzas = pedido.itens.reduce((soma, item) => soma + item.quantidade, 0)
+    if (totalPizzas > MAX_PIZZAS) {
+        return { subtotal: 0, desconto: 0, taxaEntrega: 0, valorTotal: 0, ehValido: false }
+    }
+
+
+    let subtotal = 0
+    for (const item of pedido.itens) {
+        const pizza = cardapio.find(p => p.id === item.pizzaId)
+        if (!pizza) continue
+        const precoBorda = item.bordaRecheada ? PRECO_BORDA : 0
+        subtotal += item.quantidade * (pizza.preco + precoBorda)
+    }
+
+    if (subtotal < PEDIDO_MINIMO) {
+        return { subtotal, desconto: 0, taxaEntrega: 0, valorTotal: subtotal, ehValido: false }
+    }
+
+
+    let totalPizzasGrandesOuGG = 0
+    for (const item of pedido.itens) {
+        const pizza = cardapio.find(p => p.id === item.pizzaId)
+        if (pizza && (pizza.tamanho === 'G' || pizza.tamanho === 'GG')) {
+            totalPizzasGrandesOuGG += item.quantidade
+        }
+    }
+
+
+    const desconto = totalPizzasGrandesOuGG >= MIN_PIZZAS_GG_PROMOCAO
+        ? parseFloat((subtotal * PERCENTUAL_DESCONTO).toFixed(2))
+        : 0
+
+
+    const taxaEntrega = subtotal > LIMITE_FRETE_GRATIS ? 0 : TAXA_ENTREGA
+
+
+    const valorTotal = parseFloat((subtotal - desconto + taxaEntrega).toFixed(2))
+
+    return { subtotal, desconto, taxaEntrega, valorTotal, ehValido: true }
 }
 
 // ==================== TESTES ====================

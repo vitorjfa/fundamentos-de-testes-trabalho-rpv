@@ -58,40 +58,61 @@ const alunos: IAluno[] = [
 // ==================== FUNÇÕES A IMPLEMENTAR ====================
 
 function calcularMedia(alunoId: number): IResultadoMedia {
-    // TODO: Implementar a lógica seguindo as regras de negócio
-    //
-    // Passos sugeridos:
-    // 1. Buscar o aluno pelo id
-    // 2. Verificar se o aluno existe
-    // 3. Verificar se todas as notas estão entre 0 e 10
-    // 4. Calcular a média ponderada: (P1×1 + P2×1 + P3×2 + P4×2) / 6
-    // 5. Calcular bônus: presença >= 75% → +0.5 | entregou trabalhos → +1.0
-    // 6. Média final = média + bônus (máximo 10)
+    const BONUS_PRESENCA = 0.5
+    const BONUS_TRABALHOS = 1.0
+    const MIN_PRESENCA = 75
+    const NOTA_MAX = 10
+    const NOTA_MIN = 0
 
-    return {
-        media: 0,
-        bonus: 0,
-        mediaFinal: 0,
-        ehValido: false
+
+    const aluno = alunos.find(a => a.id === alunoId)
+
+
+    if (!aluno) {
+        return { media: 0, bonus: 0, mediaFinal: 0, ehValido: false }
     }
+
+
+    const { p1, p2, p3, p4 } = aluno.notas
+    if ([p1, p2, p3, p4].some(n => n < NOTA_MIN || n > NOTA_MAX)) {
+        return { media: 0, bonus: 0, mediaFinal: 0, ehValido: false }
+    }
+
+    const media = (p1 * 1 + p2 * 1 + p3 * 2 + p4 * 2) / 6
+
+
+    let bonus = 0
+    if (aluno.presenca >= MIN_PRESENCA) bonus += BONUS_PRESENCA
+    if (aluno.entregouTrabalhos) bonus += BONUS_TRABALHOS
+
+
+    const mediaFinal = Math.min(media + bonus, NOTA_MAX)
+
+    return { media, bonus, mediaFinal, ehValido: true }
 }
 
 function verificarAprovacao(alunoId: number): IResultadoAprovacao {
-    // TODO: Implementar a lógica seguindo as regras de negócio
-    //
-    // Passos sugeridos:
-    // 1. Chamar calcularMedia(alunoId) para obter a média final
-    // 2. Se a média não é válida, retornar inválido
-    // 3. Verificar a situação:
-    //    - mediaFinal >= 7 → "aprovado"
-    //    - mediaFinal >= 5 e < 7 → "recuperacao"
-    //    - mediaFinal < 5 → "reprovado"
 
-    return {
-        situacao: '',
-        mediaFinal: 0,
-        ehValido: false
+    const resultado = calcularMedia(alunoId)
+
+
+    if (!resultado.ehValido) {
+        return { situacao: '', mediaFinal: 0, ehValido: false }
     }
+
+
+    const { mediaFinal } = resultado
+    let situacao: IResultadoAprovacao['situacao']
+
+    if (mediaFinal >= 7) {
+        situacao = 'aprovado'
+    } else if (mediaFinal >= 5) {
+        situacao = 'recuperacao'
+    } else {
+        situacao = 'reprovado'
+    }
+
+    return { situacao, mediaFinal, ehValido: true }
 }
 
 // ==================== TESTES ====================

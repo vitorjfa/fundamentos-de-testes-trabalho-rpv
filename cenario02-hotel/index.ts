@@ -48,23 +48,48 @@ const quartos: IQuarto[] = [
 // ==================== FUNÇÃO A IMPLEMENTAR ====================
 
 function calcularReserva(reserva: IReserva): IResultadoReserva {
-    // TODO: Implementar a lógica seguindo as regras de negócio
-    //
-    // Passos sugeridos:
-    // 1. Buscar o quarto pelo quartoId
-    // 2. Validar: quarto existe, noites entre 1-30, hóspedes dentro da capacidade
-    // 3. Calcular valor da diária base (precoNoite do quarto)
-    // 4. Se alta temporada (mes 12, 1 ou 2): diária *= 1.30
-    // 5. Se 3+ noites: desconto = 10% sobre (diária × noites)
-    // 6. Se café da manhã: adicionar R$ 30 por noite
-    // 7. Calcular valorTotal: (diária × noites) - desconto + (café × noites)
+    const CAFE_POR_NOITE = 30
+    const DESCONTO_LONGA_ESTADIA = 0.1
+    const MIN_NOITES_DESCONTO = 3
+    const ACRESCIMO_ALTA_TEMPORADA = 1.30
+    const MESES_ALTA_TEMPORADA = [12, 1, 2]
+    const MIN_NOITES = 1
+    const MAX_NOITES = 30
 
-    return {
-        valorDiaria: 0,
-        valorTotal: 0,
-        desconto: 0,
-        ehValida: false
+
+    const quarto = quartos.find(q => q.id === reserva.quartoId)
+
+
+    if (
+        !quarto ||
+        reserva.noites < MIN_NOITES ||
+        reserva.noites > MAX_NOITES ||
+        reserva.hospedes > quarto.capacidade
+    ) {
+        return { valorDiaria: 0, valorTotal: 0, desconto: 0, ehValida: false }
     }
+
+
+    let valorDiaria = quarto.precoNoite
+
+
+    if (MESES_ALTA_TEMPORADA.includes(reserva.mes)) {
+        valorDiaria *= ACRESCIMO_ALTA_TEMPORADA
+    }
+
+
+    const subtotalDiarias = valorDiaria * reserva.noites
+    const desconto = reserva.noites >= MIN_NOITES_DESCONTO
+        ? parseFloat((subtotalDiarias * DESCONTO_LONGA_ESTADIA).toFixed(2))
+        : 0
+
+
+    const totalCafe = reserva.cafeDaManha ? CAFE_POR_NOITE * reserva.noites : 0
+
+
+    const valorTotal = parseFloat((subtotalDiarias - desconto + totalCafe).toFixed(2))
+
+    return { valorDiaria, valorTotal, desconto, ehValida: true }
 }
 
 // ==================== TESTES ====================
